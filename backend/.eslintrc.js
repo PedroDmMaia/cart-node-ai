@@ -1,3 +1,5 @@
+const { EndOfLineState } = require('typescript');
+
 module.exports = {
   parser: '@typescript-eslint/parser',
   parserOptions: {
@@ -15,6 +17,7 @@ module.exports = {
     node: true,
     jest: true,
   },
+  EndOfLineState: 'auto',
   ignorePatterns: ['.eslintrc.js'],
   rules: {
     '@typescript-eslint/interface-name-prefix': 'off',
