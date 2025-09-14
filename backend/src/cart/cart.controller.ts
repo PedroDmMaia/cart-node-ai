@@ -1,6 +1,5 @@
-import { BadRequestException, Body, Controller, Get, Post } from "@nestjs/common";
+import { BadRequestException, Body, Controller, Get, NotFoundException, Post } from "@nestjs/common";
 import { CartService } from "./cart.service";
-import { NotFoundError } from "rxjs";
 
 @Controller('cart')
 export class ControllerCart {
@@ -24,7 +23,7 @@ export class ControllerCart {
     const haveCart = this.cartService.getCart(this.userId)
 
     if (!haveCart) {
-      throw new NotFoundError('Cart not found')
+      throw new NotFoundException('Cart not found')
     }
 
     return haveCart
