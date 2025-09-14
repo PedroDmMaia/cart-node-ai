@@ -35,6 +35,7 @@ describe('Cart (e2e)', () => {
     expect(response.body).toHaveProperty('id')
 
     const responseCart = await request(app.getHttpServer()).get('/cart/')
+    console.log(responseCart.body)
     expect(responseCart.status).toBe(200)
     expect(responseCart.body.id).toBe(response.body.id)
     expect(responseCart.body.items[0].id).toBe(1)
