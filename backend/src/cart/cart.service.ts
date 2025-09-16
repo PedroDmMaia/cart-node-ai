@@ -4,7 +4,7 @@ import { NotFoundError } from "rxjs";
 
 type ICart = {
   id: number
-  user_id: Date
+  user_id: number
   create_at: number
   store_id: number
   active: boolean
@@ -91,8 +91,8 @@ export class CartService {
             )
           ) AS items
         FROM carts
-               JOIN cart_items ON carts.id = cart_items.cart_id
-               JOIN products ON cart_items.product_id = products.id
+               LEFT JOIN cart_items ON carts.id = cart_items.cart_id
+               LEFT JOIN products ON cart_items.product_id = products.id
         WHERE carts.user_id = $1
           AND carts.active = true
         GROUP BY carts.id
@@ -100,7 +100,13 @@ export class CartService {
       [userId]
     )
 
-    return result.rows[0] ?? null
+    const hasItems = result.rows[0].items.length > 0 && result.rows[0].items[0].id !== null
+
+    return result.rows[0] ? {
+      ...result.rows[0],
+      items: hasItems ? result.rows[0].items : []
+    }
+      : null
   }
 
   async updateCartItemQuantity(userId: number, productId: number, quantity: number) {
@@ -117,6 +123,27 @@ export class CartService {
     await this.postgresService.client.query(
       `UPDATE cart_items SET quantity = $1 WHERE cart_id = $2 AND product_id = $3`,
       [quantity, cart.id, productId]
+    )
+  }
+
+  async removeCartItem(userId: number, productId: number) {
+    const cart = await this.getCart(userId)
+
+    if (!cart) {
+      throw new NotFoundException('Cart not found')
+    }
+
+    if (cart.user_id !== userId) {
+      throw new ForbiddenException('Cart not found')
+    }
+
+    if (cart.items.every(item => item.id !== productId)) {
+      throw new NotFoundException('Product not found in cart')
+    }
+
+    await this.postgresService.client.query(
+      `DELETE FROM cart_items WHERE cart_id = $1 AND product_id = $2`,
+      [cart.id, productId]
     )
   }
 }
