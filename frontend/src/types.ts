@@ -10,4 +10,16 @@ export type IProduct = {
   }
 };
 
-// export types 
+export type ICart = {
+  id: number
+  user_id: number
+  create_at: number
+  store_id: number
+  active: boolean
+  items: {
+    id: number
+    quantity: number
+    name: string
+    price: number
+  }[]
+}
