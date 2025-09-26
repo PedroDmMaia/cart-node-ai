@@ -15,7 +15,7 @@ export class ControllerCart {
       throw new BadRequestException('Product ID and quantity are required')
     }
 
-    return this.cartService.addCart(this.userId, body.productId, body.quantity)
+    return this.cartService.addToCart(this.userId, body.productId, body.quantity)
   }
 
   @Get()

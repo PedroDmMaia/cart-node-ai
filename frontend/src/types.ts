@@ -14,8 +14,12 @@ export type ICart = {
   id: number
   user_id: number
   create_at: number
-  store_id: number
   active: boolean
+  total: number
+  store: {
+    id: number
+    name: string
+  }
   items: {
     id: number
     quantity: number
